@@ -1,0 +1,23 @@
+{
+  "name": "health-tracker-ufend-7-2",
+  "version": "1.0.0",
+  "description": "Health Tracker for Udacity Front-End Nanodegree",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "backbone",
+    "firebase",
+    "javascript"
+  ],
+  "author": "Mark Hsu",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "."
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1"
+  }
+}
