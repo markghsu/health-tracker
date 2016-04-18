@@ -12,8 +12,14 @@ app.SavedFoodView = Backbone.View.extend({
 	initialize: function() {
 		this.listenTo(this.model, 'change', this.render);
 		this.listenTo(this.model, 'destroy', this.remove);
+		this.listenTo(this.model, 'removeView', this.removeView);
 	},
 	template: _.template($("#saved-template").html()),
+	removeView: function() {
+		this.stopListening();
+		this.remove();
+		console.log('removing view for model: ' + this.model.get('name'));
+	},
 	render: function() {
 		this.$el.html(this.template(this.model.attributes));
 		return this;

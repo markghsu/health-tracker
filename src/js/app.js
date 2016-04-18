@@ -4,7 +4,9 @@ app.appId = "84122b41";
 app.appKey = "043ae02bdddd4f43ea1ace2f688931c5";
 
 $(function(){
-	app.SavedFoods = new app.FoodsList();
-	app.searchview = new SearchView({collection: new app.AvailFoods()});
+	app.Router = new Workspace();
+	Backbone.history.start();
+	app.SavedFoods = new app.FoodsList({date: app.date});
 	app.myView = new AppView();
+	app.searchview = new SearchView({collection: new app.AvailFoods()});
 });
