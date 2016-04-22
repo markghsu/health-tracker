@@ -21,30 +21,64 @@
 					<div>Powered by <a href="http://www.nutritionix.com/api">Nutritionix API</a></div>
 				</div>
 				<div id="food-inputs" class="col-md-4 col-sm-6 col-xs-12">
-					<label>Choose food:</label>
-					<select id="food-select" class="food-select" multiple>
-					</select>
+					<div><label>Choose food:</label>
+					<select id="food-select" class="food-select" size="1">
+					</select></div>
 					<button id="choose-food">Add selected food(s) to list</button>
-				</div>
-				<div class="col-md-4 col-sm-6 col-xs-12">
 					<button id="add-empty">Add empty food</button>
+				</div>
+				<div class="col-md-4 col-sm-12 col-xs-12" id="food-info">
+					<!--display food nutrition here-->
 				</div>
 			</section>
 			<section class="main">
 				<table class="saved-list table table-hover">
-					<thead><th>x</th><th>Quantity</th><th>Name</th><th>Calories per item</th></thead>
+					<thead>
+						<th>Delete</th>
+						<th>Quantity</th>
+						<th>Name</th>
+						<th>Calories (cal/item)</th>
+						<th>Carbs (g/item)</th>
+						<th>Fat (g/item)</th>
+						<th>Protein (g/item)</th>
+					</thead>
+					<tfoot id="totals">
+					</tfoot>
 					<tbody id="saved-list"></tbody>
 				</table>
 			</section>
-			<footer>
-				Total Calories:
-			</footer>
 		</article>
 		<script type="text/template" id="food-template">
-			<%= name %>
+			<h3 class=""><%= name %></h3>
+			<div class=""><b>Calories:</b> <%= calories %> cals</div>
+			<div class=""><b>Carbohydrates:</b> <%= carbs %> g</div>
+			<div class=""><b>Fat:</b> <%= fat %> g</div>
+			<div class=""><b>Protein:</b> <%= protein %> g</div>
 		</script>
 		<script type="text/template" id="saved-template">
-			<td><button class="btn-danger delete">x</button></td><td><div class="qty"><%= quantity %></div><input class="qty-input hide" value="<%= quantity %>"></td><td><div class="name"><%= name %></div><input class="name-input hide" value="<%= name %>"></td><td><div class=""><%= calories %></div><input class="calories-input hide" value="<%= calories %>"></td>
+			<td><button class="btn-danger delete">x</button></td>
+			<td><div class="qty"><%= quantity %></div><input class="qty-input hide" value="<%= quantity %>"></td>
+			<td><div class="name"><%= name %></div><input class="name-input hide" value="<%= name %>"></td>
+			<td><div class="calories"><%= calories %> cals</div><input class="calories-input hide" value="<%= calories %>"></td>
+			<td><div class="carbs"><%= carbs %> g</div><input class="carbs-input hide" value="<%= carbs %>"></td>
+			<td><div class="fat"><%= fat %> g</div><input class="fat-input hide" value="<%= fat %>"></td>
+			<td><div class="protein"><%= protein %> g</div><input class="protein-input hide" value="<%= protein %>"></td>
+		</script>
+		<script type="text/template" id="total-template">
+			<tr class="info">
+				<td colspan="3">Totals</td>
+				<td>Calories: </td>
+				<td>Carbs: </td>
+				<td>Fat: </td>
+				<td>Protein: </td>
+			</tr>
+			<tr class="info">
+				<td colspan="3"></td>
+				<td id="total-cals"><%= calories %> cals</td>
+				<td id="total-carbs"><%= carbs %> g</td>
+				<td id="total-fat"><%= fat %> g</td>
+				<td id="total-protein"><%= protein %> g</td>
+			</tr>
 		</script>
 		<script src="js/lib/date.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.js"></script>

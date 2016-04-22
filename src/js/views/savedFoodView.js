@@ -39,12 +39,22 @@ app.SavedFoodView = Backbone.View.extend({
 		var q = this.$('.qty-input').val().trim();
 		var name = this.$('.name-input').val().trim();
 		var calories = this.$('.calories-input').val().trim();
-		if(!isNaN(q) && !isNaN(calories)){
+		var fat = this.$('.fat-input').val().trim();
+		var carbs = this.$('.carbs-input').val().trim();
+		var protein = this.$('.protein-input').val().trim();
+		if(!isNaN(q) && !isNaN(calories) && !isNaN(fat) && !isNaN(carbs) && !isNaN(protein)){
 			if(q == 0) {
 				this.delete();
 			}
 			else {
-				this.model.save({'quantity': q, name: name, calories:calories});
+				this.model.save({
+					quantity: q,
+					name: name,
+					calories:calories,
+					fat: fat,
+					carbs: carbs,
+					protein: protein
+				});
 			}
 		}
 		this.$('input').addClass('hide');

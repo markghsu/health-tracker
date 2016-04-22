@@ -6,7 +6,10 @@ var SearchView = Backbone.View.extend({
 		'keypress #search-box': 'searchOnEnter',
 		'click #search-btn': 'search',
 		'click #choose-food': 'chooseFood',
+		'click #add-empty': 'addEmpty',
+		'change #food-select': 'showSelected'
 	},
+	selectedTemplate: _.template($('#food-template').html()),
 	initialize: function() {
 		this.searchBox = this.$('#search-box');
 		this.foodSelect = this.$('#food-select');
@@ -21,13 +24,18 @@ var SearchView = Backbone.View.extend({
 		if (val) {
 			var col = this.collection;
 			$.getJSON(url, function(data) {
-				col.reset(
-					//_.pick(data.hits,{'name': fields.item_name,'calories':fields.nf_calories})
-					);
+				col.reset();
 				_.each(data.hits, function(val) {
 					var fields = val.fields;
-					col.add({'name': fields.item_name + ' ('+fields.brand_name+')','calories':fields.nf_calories});
+					col.add({
+						'name': fields.item_name + ' ('+fields.brand_name+')',
+						'calories': fields.nf_calories,
+						'carbs': fields.nf_total_carbohydrate,
+						'protein': fields.nf_protein,
+						'fat': fields.nf_total_fat
+					});
 				});
+
 			});
 		}
 	},
@@ -38,20 +46,31 @@ var SearchView = Backbone.View.extend({
 	},
 	addFood: function(food) {
 		var view = new app.FoodView({ model: food });
-		$('#food-select').append(view.render().el);
+		$('#food-select').append(view.render().el).trigger('change');
 	},
 	resetFood: function() {
 		$('#food-select').html("");
 	},
 	chooseFood: function() {
-		app.test = this.collection.get(this.foodSelect.val());
-		var mod = app.test.pick('name','calories');
-		var existing = app.SavedFoods.findWhere(mod);
-		if(existing) {
-			existing.set({'quantity': existing.get('quantity')+1});
+		if(this.foodSelect.val()) {
+			app.test = this.collection.get(this.foodSelect.val());
+			var mod = app.test.pick('name','calories','fat','protein','carbs');
+			var existing = app.SavedFoods.findWhere(mod);
+			if(existing) {
+				existing.save({'quantity': existing.get('quantity')+1});
+			}
+			else {
+				app.SavedFoods.create(mod);
+			}
 		}
-		else {
-			app.SavedFoods.create(mod);
+	},
+	addEmpty: function() {
+		app.SavedFoods.create({});
+	},
+	showSelected: function(e) {
+		if(this.foodSelect.val()) {
+			var model = this.collection.get(this.foodSelect.val());
+			$('#food-info').html(this.selectedTemplate(model.attributes));
 		}
 	}
 });

@@ -1,18 +1,20 @@
 var app = app || {};
 
-var AppView = Backbone.View.extend({
+app.AppView = Backbone.View.extend({
 	el: "#app",
+	totalTemplate: _.template($("#total-template").html()),
 	events: {
 	},
 	initialize: function() {
 		this.searchBox = this.$('#search-box');
 		this.foodSelect = this.$('#food-select');
 		this.savedList = this.$('#saved-list');
-		this.footer = this.$('footer');
+		this.footer = this.$();
 
     	this.listenTo(app.SavedFoods, 'add', this.addSavedFood);
     	this.listenTo(app.SavedFoods, 'all', this.render);
     	this.listenTo(app.SavedFoods, 'reset', this.addAllSavedFood);
+
     	app.SavedFoods.fetch();
 	},
 	addSavedFood: function(food) {
@@ -21,15 +23,29 @@ var AppView = Backbone.View.extend({
 		this.savedList.append(view.render().el);
 	},
 	addAllSavedFood: function() {
-		console.log('resetting');
 		app.SavedFoods.each(this.addSavedFood, this);
 	},
 	render: function(e) {
-		console.log(e);
-		var cals = app.SavedFoods.reduce(function(memo, current){ 
-			return current.get('calories') * current.get('quantity') + memo;
-		}, 0);
-		this.footer.html('Total Calories: '+ cals +" calories");
+		var totals = app.SavedFoods.reduce(function(memo, current){
+			var qty = current.get('quantity');
+			return {
+				calories: current.get('calories') * qty + memo.calories,
+				carbs: current.get('carbs') * qty + memo.carbs,
+				fat: current.get('fat') * qty + memo.fat,
+				protein: current.get('protein') * qty + memo.protein,
+			}
+		}, {
+			calories:0,
+			carbs: 0,
+			fat: 0,
+			protein: 0,
+		});
+
+		$('#totals').html(this.totalTemplate(_.mapObject(totals, 
+			function(val, key){
+				return Math.round(val);
+			})
+		));
 	},
 	resetDate: function(date) {
 		this.stopListening();
@@ -39,16 +55,14 @@ var AppView = Backbone.View.extend({
 			mod.off();
 			mod.trigger('removeView');
 		}, this);
-		app.SavedFoods = null;
 
 		app.SavedFoods = new app.FoodsList({date: app.date});
-		app.SavedFoods.fetch();
 
     	this.listenTo(app.SavedFoods, 'add', this.addSavedFood);
     	this.listenTo(app.SavedFoods, 'all', this.render);
     	this.listenTo(app.SavedFoods, 'reset', this.addAllSavedFood);
 
-    	//this.addAllSavedFood();
+    	app.SavedFoods.fetch();
 	}
 
 });

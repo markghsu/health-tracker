@@ -7,6 +7,9 @@ app.Food = Backbone.Model.extend({
 	defaults: {
 		name: "emptyfood",
 		calories: 0,
+		fat: 0,
+		carbs: 0,
+		protein: 0,
 		quantity: 1
 	},
 	validate: function(attributes){
