@@ -22,6 +22,10 @@ app.SavedFoodView = Backbone.View.extend({
 	},
 	render: function() {
 		this.$el.html(this.template(this.model.attributes));
+		if(!this.model.get('name')) {
+			console.log(this.model);
+			this.editAll();
+		}
 		return this;
 	},
 	edit: function(e) {
@@ -30,7 +34,13 @@ app.SavedFoodView = Backbone.View.extend({
 		$(e.currentTarget).children('input').removeClass('hide').focus();
 
 	},
+	editAll: function() {
+		this.$el.addClass('editing');
+		this.$el.find('div').addClass('hide');
+		this.$el.find('input').removeClass('hide');
+	},
 	saveOnEnter: function(e) {
+		//add tab functionality
 		if(e.keyCode === 13) {
 			this.close();
 		}

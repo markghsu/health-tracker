@@ -1,11 +1,10 @@
 var app = app || {};
 
 app.Food = Backbone.Model.extend({
-	initialize: function() {
-		//console.log('intializing Food model');
+	initialize: function(obj) {
 	},
 	defaults: {
-		name: "emptyfood",
+		name: "",
 		calories: 0,
 		fat: 0,
 		carbs: 0,

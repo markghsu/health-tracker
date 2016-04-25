@@ -20,9 +20,6 @@ var Workspace = Backbone.Router.extend({
 		if(app.myView) {
 			app.myView.resetDate(app.date);
 		}
-		//put a view to handle this?
-		$('#current-date').text("Current Date: "+ app.date);
-		$('#next-date').attr('href','#/'+ Date.parseExact(app.date,"d-M-yyyy").addDays(1).toString('d-M-yyyy'));
-		$('#previous-date').attr('href','#/'+ Date.parseExact(app.date,"d-M-yyyy").addDays(-1).toString('d-M-yyyy'));
+		
 	},
 });

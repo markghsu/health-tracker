@@ -8,6 +8,7 @@ var gulp = require('gulp'),
 	replace = require('gulp-replace'),
 	merge = require('merge-stream'),
 	sourcemaps = require('gulp-sourcemaps');
+var jsfiles = ['src/js/lib/date.js','src/js/models/food.js','src/js/collections/availfoods.js','src/js/collections/foodslist.js','src/js/views/*','src/js/routers/router.js','src/js/app.js'];
 
 gulp.task('process-html', function() {
 	return gulp.src('src/*.html')
@@ -16,7 +17,7 @@ gulp.task('process-html', function() {
 });
 
 gulp.task('process-scripts', function() {
-	return gulp.src(['src/js/lib/date.js','src/js/models/food.js','src/js/collections/availfoods.js','src/js/collections/foodslist.js','src/js/views/*','src/js/routers/router.js','src/js/app.js'])
+	return gulp.src(jsfiles)
 		.pipe(sourcemaps.init())
 		.pipe(lint())
 		.pipe(lint.format())
@@ -36,7 +37,7 @@ gulp.task('process-styles', function() {
 });
 
 gulp.task('watch', function(){
-	gulp.watch(['src/js/app-modelView.js','src/js/map.js','src/js/style.js'],['process-scripts']);
+	gulp.watch(jsfiles,['process-scripts']);
 	gulp.watch('src/*.html',['process-html']);
 	gulp.watch('src/css/*.css',['process-styles']);
 });

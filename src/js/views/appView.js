@@ -16,9 +16,12 @@ app.AppView = Backbone.View.extend({
     	this.listenTo(app.SavedFoods, 'reset', this.addAllSavedFood);
 
     	app.SavedFoods.fetch();
+
+		$('#current-date').text("Current Date: "+ Date.parseExact(app.date,"d-M-yyyy").toString('MMM d, yyyy'));
+		$('#next-date').attr('href','#/'+ Date.parseExact(app.date,"d-M-yyyy").addDays(1).toString('d-M-yyyy'));
+		$('#previous-date').attr('href','#/'+ Date.parseExact(app.date,"d-M-yyyy").addDays(-1).toString('d-M-yyyy'));
 	},
 	addSavedFood: function(food) {
-		//console.log(food);
 		var view = new app.SavedFoodView({ model: food });
 		this.savedList.append(view.render().el);
 	},
@@ -48,6 +51,7 @@ app.AppView = Backbone.View.extend({
 		));
 	},
 	resetDate: function(date) {
+
 		this.stopListening();
 		this.savedList.html("");
 		app.SavedFoods.off();
@@ -56,13 +60,18 @@ app.AppView = Backbone.View.extend({
 			mod.trigger('removeView');
 		}, this);
 
-		app.SavedFoods = new app.FoodsList({date: app.date});
+		app.SavedFoods = new app.FoodsList({date: date});
 
     	this.listenTo(app.SavedFoods, 'add', this.addSavedFood);
     	this.listenTo(app.SavedFoods, 'all', this.render);
     	this.listenTo(app.SavedFoods, 'reset', this.addAllSavedFood);
 
     	app.SavedFoods.fetch();
+
+    	dateV = Date.parseExact(date,"d-M-yyyy");
+		$('#current-date').text("Current Date: "+ Date.parseExact(app.date,"d-M-yyyy").toString('MMM d, yyyy'));
+		$('#next-date').attr('href','#/'+ Date.parseExact(date,"d-M-yyyy").addDays(1).toString('d-M-yyyy'));
+		$('#previous-date').attr('href','#/'+ Date.parseExact(date,"d-M-yyyy").addDays(-1).toString('d-M-yyyy'));
 	}
 
 });
