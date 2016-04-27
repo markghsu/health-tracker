@@ -4,3 +4,50 @@
 .food-select {
 	min-width: 80px;
 }
+.delete-cell {
+
+}
+tr:hover .delete-cell {
+
+}
+
+@media only screen and (max-width: 760px) {
+	table, thead, tbody, tfoot{
+		display: block;
+	}
+	tr {
+		display: flex;
+		flex-wrap: wrap;
+	}
+	.resp-td.name-td {
+		order: -1;
+		font-weight: bold;
+	}
+	.resp-td.edit-cell {
+		order:1000;
+		flex:1 50%;
+	}
+	.resp-td.delete-cell {
+		order:1001;
+		flex:1 50%;
+	}
+	.resp-td {
+		flex: 1 100%;
+	}
+	.resp-td div{
+		display: inline-block;
+	}
+	thead tr {
+		/*don't show thead*/
+		position: absolute;
+		top: -9999px;
+		left: -9999px;
+	}
+
+	tr { 
+		border: 1px solid black;
+	}
+	td::before {
+	  content: attr(data-title);
+	}
+}

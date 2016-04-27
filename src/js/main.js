@@ -239,9 +239,11 @@ app.SavedFoodView = Backbone.View.extend({
 	className: "",
 	events: {
 		"keypress input": "saveOnEnter",
-		"click .delete": "delete",
+		"click .delete-btn": "delete",
 		"dblclick td": "edit",
-		"blur input": "close"
+		"click .edit-btn": "edit",
+		"click .save-btn": "saveAndClose",
+		"click .cancel-btn": "close"
 	},
 	initialize: function() {
 		this.listenTo(this.model, 'change', this.render);
@@ -264,9 +266,14 @@ app.SavedFoodView = Backbone.View.extend({
 	},
 	edit: function(e) {
 		this.$el.addClass('editing');
-		$(e.currentTarget).children('div').addClass('hide');
-		$(e.currentTarget).children('input').removeClass('hide').focus();
-
+		this.$el.find('div').addClass('hide');
+		this.$el.find('.save-btn').removeClass('hide');
+		this.$el.find('.edit-btn').addClass('hide');
+		this.$el.find('.cancel-btn').removeClass('hide');
+		this.$el.find('.delete-btn').addClass('hide');
+		this.$el.find('input').removeClass('hide');
+		//$(e.currentTarget).children('div').addClass('hide');
+		//$(e.currentTarget).children('input').removeClass('hide').focus();
 	},
 	editAll: function() {
 		this.$el.addClass('editing');
@@ -274,12 +281,11 @@ app.SavedFoodView = Backbone.View.extend({
 		this.$el.find('input').removeClass('hide');
 	},
 	saveOnEnter: function(e) {
-		//add tab functionality
-		if(e.keyCode === 13) {
+	/*	if(e.keyCode === 13) {
 			this.close();
-		}
+		}*/
 	},
-	close: function(e) {
+	saveAndClose: function(e) {
 		var q = this.$('.qty-input').val().trim();
 		var name = this.$('.name-input').val().trim();
 		var calories = this.$('.calories-input').val().trim();
@@ -301,8 +307,16 @@ app.SavedFoodView = Backbone.View.extend({
 				});
 			}
 		}
+		this.close();
+	},
+	close: function(e) {
 		this.$('input').addClass('hide');
 		this.$('div').removeClass('hide');
+		this.$('.save-btn').addClass('hide');
+		this.$('.edit-btn').removeClass('hide');
+		this.$('.cancel-btn').addClass('hide');
+		this.$('.delete-btn').removeClass('hide');
+
 		this.$el.removeClass('editing');
 	},
 	delete: function() {

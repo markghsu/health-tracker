@@ -32,8 +32,9 @@
 				</div>
 			</section>
 			<section class="main">
-				<table class="saved-list table table-hover">
+				<table class="saved-list table table-hover table-striped">
 					<thead>
+						<th>Edit</th>
 						<th>Delete</th>
 						<th>Quantity</th>
 						<th>Name</th>
@@ -56,7 +57,14 @@
 			<div class=""><b>Protein:</b> <%= protein %> g</div>
 		</script>
 		<script type="text/template" id="saved-template">
-			<td><button class="btn-danger delete">x</button></td>
+			<td class="edit-cell">
+				<button class="btn-primary edit edit-btn">✎</button>
+				<button class="btn-primary save save-btn hide">save</button>
+			</td>
+			<td class="delete-cell">
+				<button class="btn-danger delete delete-btn">x</button>
+				<button class="btn-danger cancel cancel-btn hide">cancel</button>
+			</td>
 			<td><div class="qty"><%= quantity %></div><input class="qty-input hide" value="<%= quantity %>"></td>
 			<td><div class="name"><%= name %></div><input class="name-input hide" value="<%= name %>"></td>
 			<td><div class="calories"><%= calories %> cals</div><input class="calories-input hide" value="<%= calories %>"></td>
@@ -66,14 +74,14 @@
 		</script>
 		<script type="text/template" id="total-template">
 			<tr class="info">
-				<td colspan="3">Totals</td>
+				<td colspan="4">Totals</td>
 				<td>Calories: </td>
 				<td>Carbs: </td>
 				<td>Fat: </td>
 				<td>Protein: </td>
 			</tr>
 			<tr class="info">
-				<td colspan="3"></td>
+				<td colspan="4"></td>
 				<td id="total-cals"><%= calories %> cals</td>
 				<td id="total-carbs"><%= carbs %> g</td>
 				<td id="total-fat"><%= fat %> g</td>
