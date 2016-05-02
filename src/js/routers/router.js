@@ -10,11 +10,9 @@ var Workspace = Backbone.Router.extend({
 			date = date.trim();
 		}
 		if(Date.parseExact(date,"d-M-yyyy")) {
-			console.log("date: " + date);
 			app.date = date;
 		}
 		else {
-			console.log("date failure!");
 			app.date = Date.today().toString('d-M-yyyy');
 		}
 		if(app.myView) {

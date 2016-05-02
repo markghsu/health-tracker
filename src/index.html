@@ -6,18 +6,44 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 		<link rel="stylesheet" href="css/style.css">
-		<title>Health/Calorie Tracker App</title>
+		<title>Calorie Tracker</title>
 	</head>
 	<body>
 		<article id="app" class="container-fluid">
-			<div class="row"><h1 class="col-md-12 text-center">Health Tracking app</h1></div>
-			<nav id="date-nav" class="date-nav text-center"><ul class="list-inline"><li class=""><a id="previous-date" href="#/previous">previous date</a></li><li class="" id="current-date">Current Date:</li><li class=""><a id="next-date" href="#/next">next date</a></li></nav>
+			<div class="row"><h1 class="col-md-12 text-center">Calorie Tracker -- <span id="date-picker"></span></h1></div>
+			<nav id="date-nav" class="date-nav text-center">
+				<ul class="list-inline">
+					<li class="">
+						<a id="previous-date" href="#/previous"><button>Previous Date</button></a>
+					</li>
+					<li class=""><a id="previous-date" href="#"><button>Goto Today</button></a></li>
+					<li class="">
+						<a id="next-date" href="#/next"><button>Next Date</button></a>
+					</li>
+				</ul>
+			</nav>
+			<section class="saved-list">
+				<h3>Today's Food:</h3>
+				<div class="table-container table">
+					<div class="saved-list-head">
+						<div class="table-header">Quantity</div>
+						<div class="table-header">Name</div>
+						<div class="table-header">Calories (cal/item)</div>
+						<div class="table-header">Carbs (g/item)</div>
+						<div class="table-header">Fat (g/item)</div>
+						<div class="table-header">Protein (g/item)</div>
+					</div>
+					<div id="saved-list" class="saved-list-body"></div>
+					<footer id="totals" class="bg-info"></footer>
+				</div>
+			</section>
 			<section class="row" id="search-foods">
 				<div id="search-form" class="col-md-4 col-sm-6 col-xs-12">
-					<label>Search for a food:
+					<label>Search for a food:</label>
 						<input id="search-box" placeholder="e.g. bread" type="search">
+						<button class="button" id="search-btn">Search</button>
 					</label>
-					<button class="button" id="search-btn">Search</button>
+					
 					<div>Powered by <a href="http://www.nutritionix.com/api">Nutritionix API</a></div>
 				</div>
 				<div id="food-inputs" class="col-md-4 col-sm-6 col-xs-12">
@@ -25,68 +51,68 @@
 					<select id="food-select" class="food-select" size="1">
 					</select></div>
 					<button id="choose-food">Add selected food to list</button>
-					<button id="add-empty">Add empty food</button>
+					<button id="add-empty">Add custom food</button>
 				</div>
 				<div class="col-md-4 col-sm-12 col-xs-12" id="food-info">
 					<!--display food nutrition here-->
 				</div>
 			</section>
-			<section class="main">
-				<table class="saved-list table table-hover table-striped">
-					<thead>
-						<th>Edit</th>
-						<th>Delete</th>
-						<th>Quantity</th>
-						<th>Name</th>
-						<th>Calories (cal/item)</th>
-						<th>Carbs (g/item)</th>
-						<th>Fat (g/item)</th>
-						<th>Protein (g/item)</th>
-					</thead>
-					<tbody id="saved-list"></tbody>
-					<tfoot id="totals">
-					</tfoot>
-				</table>
-			</section>
+			<footer>
+			</footer>
 		</article>
 		<script type="text/template" id="food-template">
-			<h3 class=""><%= name %></h3>
+			<h4 class="fade-in"><%= name %></h4>
 			<div class=""><b>Calories:</b> <%= calories %> cals</div>
 			<div class=""><b>Carbohydrates:</b> <%= carbs %> g</div>
 			<div class=""><b>Fat:</b> <%= fat %> g</div>
 			<div class=""><b>Protein:</b> <%= protein %> g</div>
 		</script>
 		<script type="text/template" id="saved-template">
-			<td data-title="edit:" class="edit-cell resp-td">
-				<button class="btn-primary edit edit-btn">✎</button>
-				<button class="btn-primary save save-btn hide">save</button>
-			</td>
-			<td data-title="delete:" class="delete-cell resp-td">
-				<button class="btn-danger delete delete-btn">x</button>
-				<button class="btn-danger cancel cancel-btn hide">cancel</button>
-			</td>
-			<td data-title="Quantity: " class="resp-td"><div class="qty"><%= quantity %></div><input class="qty-input hide" value="<%= quantity %>"></td>
-			<td data-title="Name: " class="resp-td name-td"><div class="name"><%= name %></div><input class="name-input hide" value="<%= name %>"></td>
-			<td data-title="Calories: " class="resp-td"><div class="calories"><%= calories %> cals</div><input class="calories-input hide" value="<%= calories %>"></td>
-			<td data-title="Carbs: " class="resp-td"><div class="carbs"><%= carbs %> g</div><input class="carbs-input hide" value="<%= carbs %>"></td>
-			<td data-title="Fat: " class="resp-td"><div class="fat"><%= fat %> g</div><input class="fat-input hide" value="<%= fat %>"></td>
-			<td data-title="Protein: " class="resp-td"><div class="protein"><%= protein %> g</div><input class="protein-input hide" value="<%= protein %>"></td>
+			<div class="error-msg bg-danger flex-cell hide"></div>
+			<div data-title="Quantity: " class="flex-cell">
+				<div class="qty display"><%= quantity %></div>
+				<input class="qty-input hide" value="<%= quantity %>">
+			</div>
+			<div data-title="Name: " class="flex-cell name-cell">
+				<div class="name display"><%= name %></div>
+				<input class="name-input hide" value="<%= name %>">
+			</div>
+			<div data-title="Calories: " class="flex-cell">
+				<div class="calories display"><%= calories %> cals</div>
+				<input class="calories-input hide" value="<%= calories %>">
+			</div>
+			<div data-title="Carbohydrates: " class="flex-cell">
+				<div class="carbs display"><%= carbs %> g</div>
+				<input class="carbs-input hide" value="<%= carbs %>">
+			</div>
+			<div data-title="Fat: " class="flex-cell">
+				<div class="fat display"><%= fat %> g</div>
+				<input class="fat-input hide" value="<%= fat %>">
+			</div>
+			<div data-title="Protein: " class="flex-cell">
+				<div class="protein display"><%= protein %> g</div>
+				<input class="protein-input hide" value="<%= protein %>">
+			</div>
+			<div class="flex-cell last-cell btn-cell">
+				<button class="btn-primary edit edit-btn">✎Edit</button>
+				<button class="btn-primary save save-btn hide">Save</button>
+			</div>
+			<div class="flex-cell last-cell btn-cell">
+				<button class="btn-danger delete delete-btn">Delete</button>
+				<button class="btn-danger cancel cancel-btn hide">Cancel</button>
+			</div>
 		</script>
 		<script type="text/template" id="total-template">
-			<tr class="info">
-				<td colspan="4">Totals</td>
-				<td>Calories: </td>
-				<td>Carbs: </td>
-				<td>Fat: </td>
-				<td>Protein: </td>
-			</tr>
-			<tr class="info">
-				<td colspan="4"></td>
-				<td id="total-cals"><%= calories %> cals</td>
-				<td id="total-carbs"><%= carbs %> g</td>
-				<td id="total-fat"><%= fat %> g</td>
-				<td id="total-protein"><%= protein %> g</td>
-			</tr>
+			<div class="totals">
+				<h4 class="flex-cell">Totals</h4>
+				<div class="spacer"></div>
+				<div class="flex-cell" data-title="Calories: " id="total-cals"><%= calories %> cals</div>
+				<div class="flex-cell" data-title="Carbohydrates: " id="total-carbs"><%= carbs %> g</div>
+				<div class="flex-cell" data-title="Fat: " id="total-fat"><%= fat %> g</div>
+				<div class="flex-cell last-cell" data-title="Protein: " id="total-protein"><%= protein %> g</div>
+				<div class="spacer"></div>
+				<div class="spacer"></div>
+			</div>
 		</script>
 		<script src="js/lib/date.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>

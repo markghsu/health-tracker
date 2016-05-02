@@ -1,12 +1,12 @@
 var app = app || {};
 
 app.SavedFoodView = Backbone.View.extend({
-	tagName: "tr",
-	className: "",
+	tagName: "div",
+	className: "saved-food-row fade-in",
 	events: {
 		"keypress input": "saveOnEnter",
 		"click .delete-btn": "delete",
-		"dblclick td": "edit",
+		"dblclick .display": "edit",
 		"click .edit-btn": "edit",
 		"click .save-btn": "saveAndClose",
 		"click .cancel-btn": "close"
@@ -25,14 +25,14 @@ app.SavedFoodView = Backbone.View.extend({
 	render: function() {
 		this.$el.html(this.template(this.model.attributes));
 		if(!this.model.get('name')) {
-			console.log(this.model);
 			this.editAll();
+			//open fields for editing
 		}
 		return this;
 	},
 	edit: function(e) {
 		this.$el.addClass('editing');
-		this.$el.find('div').addClass('hide');
+		this.$el.find('.display').addClass('hide');
 		this.$el.find('.save-btn').removeClass('hide');
 		this.$el.find('.edit-btn').addClass('hide');
 		this.$el.find('.cancel-btn').removeClass('hide');
@@ -41,41 +41,48 @@ app.SavedFoodView = Backbone.View.extend({
 	},
 	editAll: function() {
 		this.$el.addClass('editing');
-		this.$el.find('div').addClass('hide');
+		this.$el.find('.display').addClass('hide');
 		this.$el.find('input').removeClass('hide');
+		this.$el.find('.save-btn').removeClass('hide');
+		this.$el.find('.edit-btn').addClass('hide');
+		this.$el.find('.cancel-btn').removeClass('hide');
+		this.$el.find('.delete-btn').addClass('hide');
 	},
 	saveOnEnter: function(e) {
-	/*	if(e.keyCode === 13) {
-			this.close();
-		}*/
 	},
 	saveAndClose: function(e) {
-		var q = this.$('.qty-input').val().trim();
-		var name = this.$('.name-input').val().trim();
-		var calories = this.$('.calories-input').val().trim();
-		var fat = this.$('.fat-input').val().trim();
-		var carbs = this.$('.carbs-input').val().trim();
-		var protein = this.$('.protein-input').val().trim();
-		if(!isNaN(q) && !isNaN(calories) && !isNaN(fat) && !isNaN(carbs) && !isNaN(protein)){
-			if(q == 0) {
-				this.delete();
+		var q = _.escape(this.$('.qty-input').val().trim());
+		var name = _.escape(this.$('.name-input').val().trim());
+		var calories = _.escape(this.$('.calories-input').val().trim());
+		var fat = _.escape(this.$('.fat-input').val().trim());
+		var carbs = _.escape(this.$('.carbs-input').val().trim());
+		var protein = _.escape(this.$('.protein-input').val().trim());
+		if(q == 0) {
+			this.delete();
+		}
+		else {
+			//When model saves, backbone won't return anything if nothing has changed (no sync)
+			//As such, we need to check specifically if the save returns false, meaning a validation error
+			//if save returns "undefined", that means nothing has changed and we should still close editing mode.
+			if(this.model.save({
+				quantity: q,
+				name: name,
+				calories: calories,
+				fat: fat,
+				carbs: carbs,
+				protein: protein
+			}) === false) {
+				this.$('.error-msg').text(this.model.validationError).removeClass('hide');
 			}
 			else {
-				this.model.save({
-					quantity: q,
-					name: name,
-					calories:calories,
-					fat: fat,
-					carbs: carbs,
-					protein: protein
-				});
+				this.$('.error-msg').addClass('hide');
+				this.close();
 			}
-		}
-		this.close();
+		}	
 	},
 	close: function(e) {
 		this.$('input').addClass('hide');
-		this.$('div').removeClass('hide');
+		this.$('.display').removeClass('hide');
 		this.$('.save-btn').addClass('hide');
 		this.$('.edit-btn').removeClass('hide');
 		this.$('.cancel-btn').addClass('hide');

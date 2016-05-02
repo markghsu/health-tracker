@@ -1,6 +1,9 @@
 .saved-list-head {
   display: none; }
 
+.editing {
+  background-color: #dff0d8; }
+
 .saved-food-row {
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -112,10 +115,6 @@ footer {
     background: inherit; }
   .spacer {
     display: table-cell; }
-  .btn-cell {
-    display: block; }
-  .saved-food-row:hover .btn-cell {
-    display: block; }
   .saved-list-body {
     display: table-row-group; }
   .flex-cell::before {

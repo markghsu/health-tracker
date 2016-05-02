@@ -4,9 +4,13 @@ $fadein-color: #fcf8e3;
 $default-bg-color: white;
 $name-bg-color: #EEE;
 $screen-md-min: 992px;
+$editing-color: #dff0d8;
 
 .saved-list-head {
 	display: none;
+}
+.editing {
+	background-color: $editing-color;
 }
 .saved-food-row {
 	display: flex;
@@ -105,10 +109,8 @@ footer {
 		display: table-cell;
 	}
 	.btn-cell {
-		display: block;
 	}
 	.saved-food-row:hover .btn-cell {
-		display: block;
 	}
 	.saved-list-body {
 		display: table-row-group;

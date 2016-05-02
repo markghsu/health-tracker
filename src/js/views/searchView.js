@@ -7,7 +7,7 @@ var SearchView = Backbone.View.extend({
 		'click #search-btn': 'search',
 		'click #choose-food': 'chooseFood',
 		'click #add-empty': 'addEmpty',
-		'change #food-select': 'showSelected'
+		'change #food-select': 'showSelected',
 	},
 	selectedTemplate: _.template($('#food-template').html()),
 	initialize: function() {
@@ -38,6 +38,7 @@ var SearchView = Backbone.View.extend({
 
 			});
 		}
+		$('#food-select').focus();
 	},
 	searchOnEnter: function(e) {
 		if(e.keyCode === 13) {

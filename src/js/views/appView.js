@@ -9,15 +9,13 @@ app.AppView = Backbone.View.extend({
 		this.searchBox = this.$('#search-box');
 		this.foodSelect = this.$('#food-select');
 		this.savedList = this.$('#saved-list');
-		this.footer = this.$();
 
     	this.listenTo(app.SavedFoods, 'add', this.addSavedFood);
     	this.listenTo(app.SavedFoods, 'all', this.render);
     	this.listenTo(app.SavedFoods, 'reset', this.addAllSavedFood);
 
     	app.SavedFoods.fetch();
-
-		$('#current-date').text("Current Date: "+ Date.parseExact(app.date,"d-M-yyyy").toString('MMM d, yyyy'));
+		$('#date-picker').text(Date.parseExact(app.date,"d-M-yyyy").toString('MMM d, yyyy'));
 		$('#next-date').attr('href','#/'+ Date.parseExact(app.date,"d-M-yyyy").addDays(1).toString('d-M-yyyy'));
 		$('#previous-date').attr('href','#/'+ Date.parseExact(app.date,"d-M-yyyy").addDays(-1).toString('d-M-yyyy'));
 	},
@@ -69,7 +67,7 @@ app.AppView = Backbone.View.extend({
     	app.SavedFoods.fetch();
 
     	dateV = Date.parseExact(date,"d-M-yyyy");
-		$('#current-date').text("Current Date: "+ Date.parseExact(app.date,"d-M-yyyy").toString('MMM d, yyyy'));
+		$('#date-picker').text(Date.parseExact(app.date,"d-M-yyyy").toString('MMM d, yyyy'));
 		$('#next-date').attr('href','#/'+ Date.parseExact(date,"d-M-yyyy").addDays(1).toString('d-M-yyyy'));
 		$('#previous-date').attr('href','#/'+ Date.parseExact(date,"d-M-yyyy").addDays(-1).toString('d-M-yyyy'));
 	}
