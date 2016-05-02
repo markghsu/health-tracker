@@ -1,6 +1,8 @@
 var gulp = require('gulp'),
 	rename = require('gulp-rename'),
 	concat = require('gulp-concat'),
+	sass = require('gulp-sass'),
+	autoprefixer = require('gulp-autoprefixer'),
 	cleancss = require('gulp-clean-css'),
 	minhtml = require('gulp-htmlmin'),
 	lint = require('gulp-eslint'),
@@ -31,15 +33,21 @@ gulp.task('process-scripts', function() {
 });
 
 gulp.task('process-styles', function() {
-	return gulp.src('src/css/*.css')
-	.pipe(cleancss())
-	.pipe(gulp.dest('dist/css'));
+	return gulp.src('src/sass/*.scss')
+		.pipe(sass().on('error', sass.logError))
+		.pipe(autoprefixer({
+			browsers: ['last 2 versions'],
+				cascade: false
+		}))
+		.pipe(gulp.dest('src/css'))
+		.pipe(cleancss())
+		.pipe(gulp.dest('dist/css'));
 });
 
 gulp.task('watch', function(){
 	gulp.watch(jsfiles,['process-scripts']);
 	gulp.watch('src/*.html',['process-html']);
-	gulp.watch('src/css/*.css',['process-styles']);
+	gulp.watch('src/sass/*.scss',['process-styles']);
 });
 
 gulp.task('default', ['process-scripts','process-html','process-styles','watch'], function() {});
