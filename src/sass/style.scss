@@ -19,8 +19,8 @@ $editing-color: #dff0d8;
 	padding: 3px;
 }
 .food-select {
-	padding: 10px 0;
-	margin: 10px 0;
+	line-height: 28px;
+	border: 1px solid $line-color;
 }
 .flex-cell {
 	border-bottom: 1px solid $line-color;
@@ -32,16 +32,12 @@ $editing-color: #dff0d8;
 	background: $name-bg-color;
 	order: -1;
 }
-.error-msg {
+.inline-error-msg {
 	order: -2;
 	font-weight: bold;
 }
-.edit-cell {
+.btn-cell {
 	order:1000;
-	flex:1 50%;
-}
-.delete-cell {
-	order:1001;
 	flex:1 50%;
 }
 .flex-cell.last-cell {
@@ -100,17 +96,15 @@ footer {
 	.flex-cell {
 		display: table-cell;
 		border: none;
-		background-color: inherit;
 	}
 	.name-cell {
 		background: inherit;
 	}
+	.inline-error-msg {
+		display: none;
+	}
 	.spacer {
 		display: table-cell;
-	}
-	.btn-cell {
-	}
-	.saved-food-row:hover .btn-cell {
 	}
 	.saved-list-body {
 		display: table-row-group;

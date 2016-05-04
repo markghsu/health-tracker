@@ -49,6 +49,9 @@ app.SavedFoodView = Backbone.View.extend({
 		this.$el.find('.delete-btn').addClass('hide');
 	},
 	saveOnEnter: function(e) {
+		if(e.keyCode === 13) {
+			this.saveAndClose();
+		}
 	},
 	saveAndClose: function(e) {
 		var q = _.escape(this.$('.qty-input').val().trim());
@@ -72,10 +75,10 @@ app.SavedFoodView = Backbone.View.extend({
 				carbs: carbs,
 				protein: protein
 			}) === false) {
-				this.$('.error-msg').text(this.model.validationError).removeClass('hide');
+				this.$('.inline-error-msg').text(this.model.validationError).removeClass('hide');
+				$('#global-error-msg').text(this.model.validationError).removeClass('hide');
 			}
 			else {
-				this.$('.error-msg').addClass('hide');
 				this.close();
 			}
 		}	
@@ -87,15 +90,18 @@ app.SavedFoodView = Backbone.View.extend({
 		this.$('.edit-btn').removeClass('hide');
 		this.$('.cancel-btn').addClass('hide');
 		this.$('.delete-btn').removeClass('hide');
-
+		this.$('.inline-error-msg').addClass('hide');
+		$('#global-error-msg').addClass('hide');
 		this.$el.removeClass('editing');
 	},
 	delete: function() {
 		this.model.destroy({
 			success: function(model, response){
+				$('#global-error-msg').addClass('hide');
 			},
 			error: function(model, response){
 				console.log("ERROR! destroying model:"+response);
+				$('#global-error-msg').text("Error destroying model: "+response).removeClass('hide');
 			}
 		})
 	}

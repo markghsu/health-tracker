@@ -22,6 +22,7 @@ var SearchView = Backbone.View.extend({
 		var url = app.searchURL.replace(/searchterm/,encodeURIComponent(val));
 		console.log(url);
 		if (val) {
+			$('#search-btn').prop('disabled', true).text("loading...");
 			var col = this.collection;
 			$.getJSON(url, function(data) {
 				col.reset();
@@ -35,7 +36,12 @@ var SearchView = Backbone.View.extend({
 						'fat': fields.nf_total_fat
 					});
 				});
-
+				$('#choose-food').prop('disabled', false);
+				$('#search-error').addClass('hide');
+			}).fail(function() {
+				$('#search-error').removeClass('hide').text("Error, unable to connect to Nutritionix API. Add custom foods in the meantime.");
+			}).always(function(){
+				$('#search-btn').prop('disabled', false).text("Search");
 			});
 		}
 		$('#food-select').focus();

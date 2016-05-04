@@ -14,16 +14,17 @@
 			<nav id="date-nav" class="date-nav text-center">
 				<ul class="list-inline">
 					<li class="">
-						<a id="previous-date" href="#/previous"><button>Previous Date</button></a>
+						<a id="previous-date" href="#/previous"><button class="btn btn-default">Previous Date</button></a>
 					</li>
-					<li class=""><a id="previous-date" href="#"><button>Goto Today</button></a></li>
+					<li class=""><a id="previous-date" href="#"><button class="btn btn-default">Goto Today</button></a></li>
 					<li class="">
-						<a id="next-date" href="#/next"><button>Next Date</button></a>
+						<a id="next-date" href="#/next"><button class="btn btn-default">Next Date</button></a>
 					</li>
 				</ul>
 			</nav>
 			<section class="saved-list">
 				<h3>Today's Food:</h3>
+				<div class="global-error-msg hide bg-danger" id="global-error-msg"></div>
 				<div class="table-container table">
 					<div class="saved-list-head">
 						<div class="table-header">Quantity</div>
@@ -37,24 +38,23 @@
 					<footer id="totals" class="bg-info"></footer>
 				</div>
 			</section>
-			<section class="row" id="search-foods">
+			<section class="row text-center" id="search-foods">
 				<div id="search-form" class="col-md-4 col-sm-6 col-xs-12">
 					<label>Search for a food:</label>
 						<input id="search-box" placeholder="e.g. bread" type="search">
-						<button class="button" id="search-btn">Search</button>
+						<button class="btn btn-default" id="search-btn">Search</button>
 					</label>
 					
 					<div>Powered by <a href="http://www.nutritionix.com/api">Nutritionix API</a></div>
 				</div>
 				<div id="food-inputs" class="col-md-4 col-sm-6 col-xs-12">
-					<div><label>Choose food:</label>
-					<select id="food-select" class="food-select" size="1">
-					</select></div>
-					<button id="choose-food">Add selected food to list</button>
-					<button id="add-empty">Add custom food</button>
+					<div>
+					<div class="bg-danger hide" id="search-error"></div>
+					<label>Choose food:</label><select id="food-select" class="food-select" size="1"></select></div>
+					<button id="choose-food" class="btn btn-default" disabled="disabled">Add selected food to list</button>
+					<button id="add-empty" class="btn btn-default">Add custom food</button>
 				</div>
 				<div class="col-md-4 col-sm-12 col-xs-12" id="food-info">
-					<!--display food nutrition here-->
 				</div>
 			</section>
 			<footer>
@@ -68,7 +68,7 @@
 			<div class=""><b>Protein:</b> <%= protein %> g</div>
 		</script>
 		<script type="text/template" id="saved-template">
-			<div class="error-msg bg-danger flex-cell hide"></div>
+			<div class="inline-error-msg bg-danger flex-cell hide"></div>
 			<div data-title="Quantity: " class="flex-cell">
 				<div class="qty display"><%= quantity %></div>
 				<input class="qty-input hide" value="<%= quantity %>">
@@ -94,12 +94,12 @@
 				<input class="protein-input hide" value="<%= protein %>">
 			</div>
 			<div class="flex-cell last-cell btn-cell">
-				<button class="btn-primary edit edit-btn">✎Edit</button>
-				<button class="btn-primary save save-btn hide">Save</button>
+				<button class="btn btn-primary edit edit-btn">✎Edit</button>
+				<button class="btn btn-primary save save-btn hide">Save</button>
 			</div>
 			<div class="flex-cell last-cell btn-cell">
-				<button class="btn-danger delete delete-btn">Delete</button>
-				<button class="btn-danger cancel cancel-btn hide">Cancel</button>
+				<button class="btn btn-danger delete delete-btn">Delete</button>
+				<button class="btn btn-danger cancel cancel-btn hide">Cancel</button>
 			</div>
 		</script>
 		<script type="text/template" id="total-template">
@@ -114,7 +114,6 @@
 				<div class="spacer"></div>
 			</div>
 		</script>
-		<script src="js/lib/date.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.2/backbone-min.js"></script>
