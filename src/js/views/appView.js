@@ -26,6 +26,7 @@ app.AppView = Backbone.View.extend({
 		$('#date-picker').text(Date.parseExact(app.date,"d-M-yyyy").toString('MMM d, yyyy'));
 		$('#next-date').attr('href','#/'+ Date.parseExact(app.date,"d-M-yyyy").addDays(1).toString('d-M-yyyy'));
 		$('#previous-date').attr('href','#/'+ Date.parseExact(app.date,"d-M-yyyy").addDays(-1).toString('d-M-yyyy'));
+		$('#global-error-msg').addClass('hide');
 	},
 	/**
 	 * @function addSavedFood
@@ -80,7 +81,8 @@ app.AppView = Backbone.View.extend({
 
 		app.SavedFoods = new app.FoodsList({date: date});
 
-    	this.listenTo(app.SavedFoods, 'add', this.addSavedFood);
+		this.initialize();
+    	/*this.listenTo(app.SavedFoods, 'add', this.addSavedFood);
     	this.listenTo(app.SavedFoods, 'all', this.render);
     	this.listenTo(app.SavedFoods, 'reset', this.addAllSavedFood);
 
@@ -89,6 +91,7 @@ app.AppView = Backbone.View.extend({
 		$('#date-picker').text(Date.parseExact(app.date,"d-M-yyyy").toString('MMM d, yyyy'));
 		$('#next-date').attr('href','#/'+ Date.parseExact(date,"d-M-yyyy").addDays(1).toString('d-M-yyyy'));
 		$('#previous-date').attr('href','#/'+ Date.parseExact(date,"d-M-yyyy").addDays(-1).toString('d-M-yyyy'));
+		*/
 	}
 
 });

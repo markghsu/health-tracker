@@ -19,6 +19,7 @@ app.Food = Backbone.Model.extend({
 		carbs: 0,
 		protein: 0,
 		quantity: 1,
+		saved: false
 	},
 	validate: function(attributes){
 		if(attributes.name == "") {

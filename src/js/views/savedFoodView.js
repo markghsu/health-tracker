@@ -34,7 +34,7 @@ app.SavedFoodView = Backbone.View.extend({
 	render: function() {
 		this.$el.html(this.template(this.model.attributes));
 		if(!this.model.get('name')) {
-			this.editAll();
+			this.edit();
 			//open fields for editing
 		}
 		return this;
@@ -50,15 +50,6 @@ app.SavedFoodView = Backbone.View.extend({
 		this.$el.find('.cancel-btn').removeClass('hide');
 		this.$el.find('.delete-btn').addClass('hide');
 		this.$el.find('input').removeClass('hide');
-	},
-	editAll: function() {
-		this.$el.addClass('editing');
-		this.$el.find('.display').addClass('hide');
-		this.$el.find('input').removeClass('hide');
-		this.$el.find('.save-btn').removeClass('hide');
-		this.$el.find('.edit-btn').addClass('hide');
-		this.$el.find('.cancel-btn').removeClass('hide');
-		this.$el.find('.delete-btn').addClass('hide');
 	},
 	/**
 	 * @function saveOnEnter save all fields when Enter key is pressed
@@ -95,7 +86,8 @@ app.SavedFoodView = Backbone.View.extend({
 				calories: calories,
 				fat: fat,
 				carbs: carbs,
-				protein: protein
+				protein: protein,
+				saved: true
 			}) === false) {
 				//Show both an inline error message (useful for mobile) and a global error message
 				this.$('.inline-error-msg').text(this.model.validationError).removeClass('hide');
@@ -108,17 +100,24 @@ app.SavedFoodView = Backbone.View.extend({
 	},
 	/**
 	 * @function close Stop showing all input fields and buttons, and instead display values
+	 * if model has never been saved, remove view, as the cancel button has been pressed prior to save.
 	 */
 	close: function() {
-		this.$('input').addClass('hide');
-		this.$('.display').removeClass('hide');
-		this.$('.save-btn').addClass('hide');
-		this.$('.edit-btn').removeClass('hide');
-		this.$('.cancel-btn').addClass('hide');
-		this.$('.delete-btn').removeClass('hide');
-		this.$('.inline-error-msg').addClass('hide');
-		$('#global-error-msg').addClass('hide');
-		this.$el.removeClass('editing');
+		if(this.model.get("saved")) {
+			this.$('input').addClass('hide');
+			this.$('.display').removeClass('hide');
+			this.$('.save-btn').addClass('hide');
+			this.$('.edit-btn').removeClass('hide');
+			this.$('.cancel-btn').addClass('hide');
+			this.$('.delete-btn').removeClass('hide');
+			this.$('.inline-error-msg').addClass('hide');
+			$('#global-error-msg').addClass('hide');
+			this.$el.removeClass('editing');
+		}
+		else {
+			$('#global-error-msg').addClass('hide');
+			this.remove();
+		}
 	},
 	/**
 	 * @function delete Attempt to destroy model

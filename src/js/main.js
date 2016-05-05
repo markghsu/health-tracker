@@ -105,6 +105,15 @@ return((r[1].length===0)?r[0]:null);};};Date.parseExact=function(s,fx){return Da
 
 var app = app || {};
 
+/**
+ * @class Model representing a Food.
+ * @property {string} name The name of the food
+ * @property {float} calories The number of calories in the food
+ * @property {float} fat The number of grams of fat in the food
+ * @property {float} carbs The number of grams of carbohydrates in the food
+ * @property {float} protein The number of grams of protein in the food
+ * @property {int} quantity The quantity of the food to be stored
+ */
 app.Food = Backbone.Model.extend({
 	initialize: function(obj) {
 	},
@@ -114,7 +123,8 @@ app.Food = Backbone.Model.extend({
 		fat: 0,
 		carbs: 0,
 		protein: 0,
-		quantity: 1
+		quantity: 1,
+		saved: false
 	},
 	validate: function(attributes){
 		if(attributes.name == "") {
@@ -142,18 +152,28 @@ app.Food = Backbone.Model.extend({
 });
 var app = app || {};
 
+/**
+ * @class Collection representing the foods that are available to be added to the food list
+ * Populated by call to Nutritionix API
+ */
 app.AvailFoods = Backbone.Collection.extend({
   model: app.Food,
 })
 var app = app || {};
 
+/**
+ * @class Collection representing the foods that are stored for a particular date.
+ * @param {string} date Date that this food is stored under
+ * Uses Firebase to store foods as a child of the date.
+ */
 app.FoodsList = Backbone.Firebase.Collection.extend({
 	initialize: function(args) {
 		this.date = args.date;
 	},
 	model: app.Food,
-	autoSync: false,
-	// autoSync causes issues with re-loading a particular food list: the autosyncing leaves events bound.
+	// autoSync causes issues with re-loading a particular date: the autosyncing
+	// makes it so that reloading a date doesn't trigger any add events, just syncs.
+	autoSync: false,	
 	url: function(){
 		return 'https://blistering-heat-9749.firebaseio.com/foodslist/' + this.date;
 	},
@@ -161,11 +181,19 @@ app.FoodsList = Backbone.Firebase.Collection.extend({
 })
 var app = app || {};
 
+/**
+ * @class AppView application view controlling the Food List
+ */
 app.AppView = Backbone.View.extend({
 	el: "#app",
+	//template for displaying total calories, etc.
 	totalTemplate: _.template($("#total-template").html()),
 	events: {
 	},
+	/**
+	 * @function initialize
+	 * Adds listeners to collection (app.SavedFoods), sets dates, loads collection
+	 */
 	initialize: function() {
 		this.searchBox = this.$('#search-box');
 		this.foodSelect = this.$('#food-select');
@@ -179,7 +207,12 @@ app.AppView = Backbone.View.extend({
 		$('#date-picker').text(Date.parseExact(app.date,"d-M-yyyy").toString('MMM d, yyyy'));
 		$('#next-date').attr('href','#/'+ Date.parseExact(app.date,"d-M-yyyy").addDays(1).toString('d-M-yyyy'));
 		$('#previous-date').attr('href','#/'+ Date.parseExact(app.date,"d-M-yyyy").addDays(-1).toString('d-M-yyyy'));
+		$('#global-error-msg').addClass('hide');
 	},
+	/**
+	 * @function addSavedFood
+	 * add a new SavedFoodView and render it to the list
+	 */
 	addSavedFood: function(food) {
 		var view = new app.SavedFoodView({ model: food });
 		this.savedList.append(view.render().el);
@@ -187,6 +220,10 @@ app.AppView = Backbone.View.extend({
 	addAllSavedFood: function() {
 		app.SavedFoods.each(this.addSavedFood, this);
 	},
+	/**
+	 * @function render
+	 * Calculate totals and display them
+	 */
 	render: function(e) {
 		var totals = app.SavedFoods.reduce(function(memo, current){
 			var qty = current.get('quantity');
@@ -209,6 +246,10 @@ app.AppView = Backbone.View.extend({
 			})
 		));
 	},
+	/**
+	 * @function resetDate
+	 * Remove listeners from current foodlist and load the one from the new date
+	 */
 	resetDate: function(date) {
 
 		this.stopListening();
@@ -221,21 +262,26 @@ app.AppView = Backbone.View.extend({
 
 		app.SavedFoods = new app.FoodsList({date: date});
 
-    	this.listenTo(app.SavedFoods, 'add', this.addSavedFood);
+		this.initialize();
+    	/*this.listenTo(app.SavedFoods, 'add', this.addSavedFood);
     	this.listenTo(app.SavedFoods, 'all', this.render);
     	this.listenTo(app.SavedFoods, 'reset', this.addAllSavedFood);
 
     	app.SavedFoods.fetch();
 
-    	dateV = Date.parseExact(date,"d-M-yyyy");
 		$('#date-picker').text(Date.parseExact(app.date,"d-M-yyyy").toString('MMM d, yyyy'));
 		$('#next-date').attr('href','#/'+ Date.parseExact(date,"d-M-yyyy").addDays(1).toString('d-M-yyyy'));
 		$('#previous-date').attr('href','#/'+ Date.parseExact(date,"d-M-yyyy").addDays(-1).toString('d-M-yyyy'));
+		*/
 	}
 
 });
 var app = app || {};
 
+/**
+ *	@class FoodView view for displaying a food as returned by Nutritionix API
+ *  Displays within a select box.
+ */
 app.FoodView = Backbone.View.extend({
 	tagName: "option",
 	className: "",
@@ -249,7 +295,9 @@ app.FoodView = Backbone.View.extend({
 	}
 });
 var app = app || {};
-
+/**
+ * @class SavedFoodView View to handle food that is saved in the foodlist
+ */
 app.SavedFoodView = Backbone.View.extend({
 	tagName: "div",
 	className: "saved-food-row fade-in",
@@ -267,19 +315,29 @@ app.SavedFoodView = Backbone.View.extend({
 		this.listenTo(this.model, 'removeView', this.removeView);
 	},
 	template: _.template($("#saved-template").html()),
+	/**
+	 * @function removeView when model is deleted, stop listening and remove
+	 */
 	removeView: function() {
 		this.stopListening();
 		this.remove();
-		console.log('removing view for model: ' + this.model.get('name'));
+		//console.log('removing view for model: ' + this.model.get('name'));
 	},
+	/**
+	 * @function render Display the food's info within the table.
+	 * the template for this includes input fields for editing
+	 */
 	render: function() {
 		this.$el.html(this.template(this.model.attributes));
 		if(!this.model.get('name')) {
-			this.editAll();
+			this.edit();
 			//open fields for editing
 		}
 		return this;
 	},
+	/**
+	 * @function edit Shows all input fields and hides display fields
+	 */
 	edit: function(e) {
 		this.$el.addClass('editing');
 		this.$el.find('.display').addClass('hide');
@@ -289,27 +347,28 @@ app.SavedFoodView = Backbone.View.extend({
 		this.$el.find('.delete-btn').addClass('hide');
 		this.$el.find('input').removeClass('hide');
 	},
-	editAll: function() {
-		this.$el.addClass('editing');
-		this.$el.find('.display').addClass('hide');
-		this.$el.find('input').removeClass('hide');
-		this.$el.find('.save-btn').removeClass('hide');
-		this.$el.find('.edit-btn').addClass('hide');
-		this.$el.find('.cancel-btn').removeClass('hide');
-		this.$el.find('.delete-btn').addClass('hide');
-	},
+	/**
+	 * @function saveOnEnter save all fields when Enter key is pressed
+	 */
 	saveOnEnter: function(e) {
 		if(e.keyCode === 13) {
 			this.saveAndClose();
 		}
 	},
+	/**
+	 * @function saveAndClose Attempt to save values to model
+	 * if successful, hide input fields and show new values
+	 * otherwise, display errors.
+	 */
 	saveAndClose: function(e) {
+		//Need to escape everything since we are outputing it to screen
 		var q = _.escape(this.$('.qty-input').val().trim());
 		var name = _.escape(this.$('.name-input').val().trim());
 		var calories = _.escape(this.$('.calories-input').val().trim());
 		var fat = _.escape(this.$('.fat-input').val().trim());
 		var carbs = _.escape(this.$('.carbs-input').val().trim());
 		var protein = _.escape(this.$('.protein-input').val().trim());
+		//if quantity is 0, remove
 		if(q == 0) {
 			this.delete();
 		}
@@ -323,8 +382,10 @@ app.SavedFoodView = Backbone.View.extend({
 				calories: calories,
 				fat: fat,
 				carbs: carbs,
-				protein: protein
+				protein: protein,
+				saved: true
 			}) === false) {
+				//Show both an inline error message (useful for mobile) and a global error message
 				this.$('.inline-error-msg').text(this.model.validationError).removeClass('hide');
 				$('#global-error-msg').text(this.model.validationError).removeClass('hide');
 			}
@@ -333,24 +394,37 @@ app.SavedFoodView = Backbone.View.extend({
 			}
 		}	
 	},
-	close: function(e) {
-		this.$('input').addClass('hide');
-		this.$('.display').removeClass('hide');
-		this.$('.save-btn').addClass('hide');
-		this.$('.edit-btn').removeClass('hide');
-		this.$('.cancel-btn').addClass('hide');
-		this.$('.delete-btn').removeClass('hide');
-		this.$('.inline-error-msg').addClass('hide');
-		$('#global-error-msg').addClass('hide');
-		this.$el.removeClass('editing');
+	/**
+	 * @function close Stop showing all input fields and buttons, and instead display values
+	 * if model has never been saved, remove view, as the cancel button has been pressed prior to save.
+	 */
+	close: function() {
+		if(this.model.get("saved")) {
+			this.$('input').addClass('hide');
+			this.$('.display').removeClass('hide');
+			this.$('.save-btn').addClass('hide');
+			this.$('.edit-btn').removeClass('hide');
+			this.$('.cancel-btn').addClass('hide');
+			this.$('.delete-btn').removeClass('hide');
+			this.$('.inline-error-msg').addClass('hide');
+			$('#global-error-msg').addClass('hide');
+			this.$el.removeClass('editing');
+		}
+		else {
+			$('#global-error-msg').addClass('hide');
+			this.remove();
+		}
 	},
+	/**
+	 * @function delete Attempt to destroy model
+	 */
 	delete: function() {
 		this.model.destroy({
 			success: function(model, response){
 				$('#global-error-msg').addClass('hide');
 			},
 			error: function(model, response){
-				console.log("ERROR! destroying model:"+response);
+				//console.log("ERROR! destroying model:"+response);
 				$('#global-error-msg').text("Error destroying model: "+response).removeClass('hide');
 			}
 		})
@@ -358,7 +432,10 @@ app.SavedFoodView = Backbone.View.extend({
 });
 var app = app || {};
 
-var SearchView = Backbone.View.extend({
+/**
+ * @class SearchView View to handle food that is searched for
+ */
+app.SearchView = Backbone.View.extend({
 	el: "#search-foods",
 	events: {
 		'keypress #search-box': 'searchOnEnter',
@@ -375,15 +452,18 @@ var SearchView = Backbone.View.extend({
 		this.listenTo(this.collection, 'add', this.addFood);
 		this.listenTo(this.collection, 'reset', this.resetFood);
 	},
+	/**
+	 *	@function search Use Nutritionix API to find possible matches for search food.
+	 */
 	search: function() {
 		var val = this.searchBox.val();
 		var url = app.searchURL.replace(/searchterm/,encodeURIComponent(val));
-		console.log(url);
 		if (val) {
 			$('#search-btn').prop('disabled', true).text("loading...");
 			var col = this.collection;
 			$.getJSON(url, function(data) {
 				col.reset();
+				//Add foods to collection
 				_.each(data.hits, function(val) {
 					var fields = val.fields;
 					col.add({
@@ -409,17 +489,28 @@ var SearchView = Backbone.View.extend({
 			this.search();
 		}
 	},
+	/**
+	 *	@function addFood add to select input when model is added to collection
+	 */
 	addFood: function(food) {
 		var view = new app.FoodView({ model: food });
 		$('#food-select').append(view.render().el).trigger('change');
 	},
+	/**
+	 *	@function resetFood empty select input
+	 */
 	resetFood: function() {
 		$('#food-select').html("");
 	},
+	/**
+	 *	@function chooseFood add selected food to saved food list
+	 */
 	chooseFood: function() {
 		if(this.foodSelect.val()) {
 			app.test = this.collection.get(this.foodSelect.val());
 			var mod = app.test.pick('name','calories','fat','protein','carbs');
+
+			//check if the food is already in the list, and if so, just increment the quantity.
 			var existing = app.SavedFoods.findWhere(mod);
 			if(existing) {
 				existing.save({'quantity': existing.get('quantity')+1});
@@ -429,9 +520,16 @@ var SearchView = Backbone.View.extend({
 			}
 		}
 	},
+	/**
+	 * @function addEmpty Add an empty model to the saved food list.
+	 */
 	addEmpty: function() {
 		app.SavedFoods.create({});
 	},
+	/**
+	 *	@function showSelected Show the nutrition info for the selected option
+	 *  in the select input
+	 */
 	showSelected: function(e) {
 		if(this.foodSelect.val()) {
 			var model = this.collection.get(this.foodSelect.val());
@@ -440,7 +538,11 @@ var SearchView = Backbone.View.extend({
 	}
 });
 var app = app || {};
-
+/**
+ * @class Router for Application.
+ * Uses the date in d-MM-yyyy format to route to the correct day and foodlist.
+ * Utilizes Datejs library to handle date checking and updating.
+ */
 var Workspace = Backbone.Router.extend({
 	routes: {
 		"*date": "date",
@@ -457,20 +559,27 @@ var Workspace = Backbone.Router.extend({
 			app.date = Date.today().toString('d-M-yyyy');
 		}
 		if(app.myView) {
+			//If the app has already been initialized, then this view will exist.
+			//If this view exists, we need to reset the date and propagate any changes
+			//to the foodlist/etc that is being displayed on screen
 			app.myView.resetDate(app.date);
 		}
 		
 	},
 });
 var app = app || {};
+
+//Since we're accessing API through front-end, we can't hide appId/key
 app.searchURL = "https://api.nutritionix.com/v1_1/search/searchterm?fields=item_name%2Citem_id%2Cbrand_name%2Cnf_calories%2Cnf_total_fat%2Cnf_total_carbohydrate%2Cnf_protein&appId=84122b41&appKey=043ae02bdddd4f43ea1ace2f688931c5"
 app.appId = "84122b41";
 app.appKey = "043ae02bdddd4f43ea1ace2f688931c5";
 
 $(function(){
+	//initialize Router
 	app.Router = new Workspace();
 	Backbone.history.start();
+	//Router has set the app date, now use it to load collection
 	app.SavedFoods = new app.FoodsList({date: app.date});
 	app.myView = new app.AppView();
-	app.searchview = new SearchView({collection: new app.AvailFoods()});
+	app.searchview = new app.SearchView({collection: new app.AvailFoods()});
 });
