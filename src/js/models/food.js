@@ -1,5 +1,14 @@
 var app = app || {};
 
+/**
+ * @class Model representing a Food.
+ * @property {string} name The name of the food
+ * @property {float} calories The number of calories in the food
+ * @property {float} fat The number of grams of fat in the food
+ * @property {float} carbs The number of grams of carbohydrates in the food
+ * @property {float} protein The number of grams of protein in the food
+ * @property {int} quantity The quantity of the food to be stored
+ */
 app.Food = Backbone.Model.extend({
 	initialize: function(obj) {
 	},
@@ -9,7 +18,7 @@ app.Food = Backbone.Model.extend({
 		fat: 0,
 		carbs: 0,
 		protein: 0,
-		quantity: 1
+		quantity: 1,
 	},
 	validate: function(attributes){
 		if(attributes.name == "") {

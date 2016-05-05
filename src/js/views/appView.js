@@ -1,10 +1,18 @@
 var app = app || {};
 
+/**
+ * @class AppView application view controlling the Food List
+ */
 app.AppView = Backbone.View.extend({
 	el: "#app",
+	//template for displaying total calories, etc.
 	totalTemplate: _.template($("#total-template").html()),
 	events: {
 	},
+	/**
+	 * @function initialize
+	 * Adds listeners to collection (app.SavedFoods), sets dates, loads collection
+	 */
 	initialize: function() {
 		this.searchBox = this.$('#search-box');
 		this.foodSelect = this.$('#food-select');
@@ -19,6 +27,10 @@ app.AppView = Backbone.View.extend({
 		$('#next-date').attr('href','#/'+ Date.parseExact(app.date,"d-M-yyyy").addDays(1).toString('d-M-yyyy'));
 		$('#previous-date').attr('href','#/'+ Date.parseExact(app.date,"d-M-yyyy").addDays(-1).toString('d-M-yyyy'));
 	},
+	/**
+	 * @function addSavedFood
+	 * add a new SavedFoodView and render it to the list
+	 */
 	addSavedFood: function(food) {
 		var view = new app.SavedFoodView({ model: food });
 		this.savedList.append(view.render().el);
@@ -26,6 +38,10 @@ app.AppView = Backbone.View.extend({
 	addAllSavedFood: function() {
 		app.SavedFoods.each(this.addSavedFood, this);
 	},
+	/**
+	 * @function render
+	 * Calculate totals and display them
+	 */
 	render: function(e) {
 		var totals = app.SavedFoods.reduce(function(memo, current){
 			var qty = current.get('quantity');
@@ -48,6 +64,10 @@ app.AppView = Backbone.View.extend({
 			})
 		));
 	},
+	/**
+	 * @function resetDate
+	 * Remove listeners from current foodlist and load the one from the new date
+	 */
 	resetDate: function(date) {
 
 		this.stopListening();
@@ -66,7 +86,6 @@ app.AppView = Backbone.View.extend({
 
     	app.SavedFoods.fetch();
 
-    	dateV = Date.parseExact(date,"d-M-yyyy");
 		$('#date-picker').text(Date.parseExact(app.date,"d-M-yyyy").toString('MMM d, yyyy'));
 		$('#next-date').attr('href','#/'+ Date.parseExact(date,"d-M-yyyy").addDays(1).toString('d-M-yyyy'));
 		$('#previous-date').attr('href','#/'+ Date.parseExact(date,"d-M-yyyy").addDays(-1).toString('d-M-yyyy'));

@@ -1,6 +1,9 @@
 var app = app || {};
 
-var SearchView = Backbone.View.extend({
+/**
+ * @class SearchView View to handle food that is searched for
+ */
+app.SearchView = Backbone.View.extend({
 	el: "#search-foods",
 	events: {
 		'keypress #search-box': 'searchOnEnter',
@@ -17,15 +20,18 @@ var SearchView = Backbone.View.extend({
 		this.listenTo(this.collection, 'add', this.addFood);
 		this.listenTo(this.collection, 'reset', this.resetFood);
 	},
+	/**
+	 *	@function search Use Nutritionix API to find possible matches for search food.
+	 */
 	search: function() {
 		var val = this.searchBox.val();
 		var url = app.searchURL.replace(/searchterm/,encodeURIComponent(val));
-		console.log(url);
 		if (val) {
 			$('#search-btn').prop('disabled', true).text("loading...");
 			var col = this.collection;
 			$.getJSON(url, function(data) {
 				col.reset();
+				//Add foods to collection
 				_.each(data.hits, function(val) {
 					var fields = val.fields;
 					col.add({
@@ -51,17 +57,28 @@ var SearchView = Backbone.View.extend({
 			this.search();
 		}
 	},
+	/**
+	 *	@function addFood add to select input when model is added to collection
+	 */
 	addFood: function(food) {
 		var view = new app.FoodView({ model: food });
 		$('#food-select').append(view.render().el).trigger('change');
 	},
+	/**
+	 *	@function resetFood empty select input
+	 */
 	resetFood: function() {
 		$('#food-select').html("");
 	},
+	/**
+	 *	@function chooseFood add selected food to saved food list
+	 */
 	chooseFood: function() {
 		if(this.foodSelect.val()) {
 			app.test = this.collection.get(this.foodSelect.val());
 			var mod = app.test.pick('name','calories','fat','protein','carbs');
+
+			//check if the food is already in the list, and if so, just increment the quantity.
 			var existing = app.SavedFoods.findWhere(mod);
 			if(existing) {
 				existing.save({'quantity': existing.get('quantity')+1});
@@ -71,9 +88,16 @@ var SearchView = Backbone.View.extend({
 			}
 		}
 	},
+	/**
+	 * @function addEmpty Add an empty model to the saved food list.
+	 */
 	addEmpty: function() {
 		app.SavedFoods.create({});
 	},
+	/**
+	 *	@function showSelected Show the nutrition info for the selected option
+	 *  in the select input
+	 */
 	showSelected: function(e) {
 		if(this.foodSelect.val()) {
 			var model = this.collection.get(this.foodSelect.val());

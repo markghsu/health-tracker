@@ -1,5 +1,9 @@
 var app = app || {};
 
+/**
+ *	@class FoodView view for displaying a food as returned by Nutritionix API
+ *  Displays within a select box.
+ */
 app.FoodView = Backbone.View.extend({
 	tagName: "option",
 	className: "",
